@@ -58,6 +58,5 @@ extern void hora_string ( char[], t_hora );
 extern int procurar_membro( t_membro[], int, int );
 extern t_membro ler_membro( t_membro[], int );
 extern void listar_membros( t_membro*, int );
-extern void agendar_teste();
 
 #endif // DADOS_H_INCLUDED

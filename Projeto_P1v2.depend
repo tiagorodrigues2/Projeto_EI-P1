@@ -19,3 +19,23 @@
 	<stdio.h>
 	"ficheiros.h"
 
+1639755047 source:c:\users\massas\desktop\projeto_p1\dados.c
+	<stdio.h>
+	"dados.h"
+
+1639755146 c:\users\massas\desktop\projeto_p1\dados.h
+
+1639755324 source:c:\users\massas\desktop\projeto_p1\main.c
+	<stdio.h>
+	<stdlib.h>
+	<locale.h>
+	"dados.h"
+	"ficheiros.h"
+
+1639755263 c:\users\massas\desktop\projeto_p1\ficheiros.h
+	"dados.h"
+
+1639755540 source:c:\users\massas\desktop\projeto_p1\ficheiros.c
+	<stdio.h>
+	"ficheiros.h"
+

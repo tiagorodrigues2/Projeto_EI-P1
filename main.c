@@ -23,6 +23,8 @@ int main()
 
     t_membro *membros = NULL;
 
+    carregar_membros( membros, &qt_membros );
+
     char opcao = '\0';
 
     do
@@ -33,7 +35,7 @@ int main()
         {
             case 'I': /* Inserir membro académico */
                 membros = adicionar_membro( membros, &qt_membros );       //dados.h
-                gravar_lembros( membros, qt_membros );                    //ficheiros.h
+                gravar_membros( membros, qt_membros );                    //ficheiros.h
                 break;
             case 'L': /* Listar membros académicos */
                 listar_membros( membros, qt_membros );                    //dados.h
