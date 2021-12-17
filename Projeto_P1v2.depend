@@ -25,17 +25,17 @@
 
 1639755146 c:\users\massas\desktop\projeto_p1\dados.h
 
-1639755324 source:c:\users\massas\desktop\projeto_p1\main.c
+1639758774 source:c:\users\massas\desktop\projeto_p1\main.c
 	<stdio.h>
 	<stdlib.h>
 	<locale.h>
 	"dados.h"
 	"ficheiros.h"
 
-1639755263 c:\users\massas\desktop\projeto_p1\ficheiros.h
+1639757774 c:\users\massas\desktop\projeto_p1\ficheiros.h
 	"dados.h"
 
-1639755540 source:c:\users\massas\desktop\projeto_p1\ficheiros.c
+1639757809 source:c:\users\massas\desktop\projeto_p1\ficheiros.c
 	<stdio.h>
 	"ficheiros.h"
 
