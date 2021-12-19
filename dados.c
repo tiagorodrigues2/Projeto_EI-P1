@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 #include "dados.h"
 
@@ -26,7 +28,7 @@ char ler_char( const char* msg )
         controlo = scanf( "%c", &car );
         limpa_stdin();
 
-        if ( controlo != 1 ) printf( "N„o foi possivel ler um caracter.\n" );
+        if ( controlo != 1 ) printf( "N√£o foi possivel ler um caracter.\n" );
 
     } while ( controlo != 1 );
 
@@ -45,9 +47,9 @@ int ler_inteiro( const char* msg, int min, int max )
         controlo = scanf( "%d", &num );
         limpa_stdin();
 
-        if ( controlo == 0 ) printf( "N„o foi possivel ler nenhum numero inteiro.\n" );
-        else if ( num < min ) printf( "O n˙mero n„o pode ser menor que %d\n", min );
-        else if ( num > max ) printf( "O n˙mero n„o pode ser maior que %d\n", max );
+        if ( controlo == 0 ) printf( "N√£o foi possivel ler nenhum numero inteiro.\n" );
+        else if ( num < min ) printf( "O n√∫mero n√£o pode ser menor que %d\n", min );
+        else if ( num > max ) printf( "O n√∫mero n√£o pode ser maior que %d\n", max );
 
     } while ( controlo == 0 || num < min || num > max );
 
@@ -66,9 +68,9 @@ int ler_float( const char* msg, float min, float max )
         controlo = scanf( "%f", &num );
         limpa_stdin();
 
-        if ( controlo == 0 ) printf( "N„o foi possivel ler nenhum n˙mero real.\n" );
-        else if ( num < min ) printf( "O n˙mero n„o pode ser menor que %.2f\n", min );
-        else if ( num > max ) printf( "O n˙mero n„o pode ser maior que %.2f\n", max );
+        if ( controlo == 0 ) printf( "N√£o foi possivel ler nenhum n√∫mero real.\n" );
+        else if ( num < min ) printf( "O n√∫mero n√£o pode ser menor que %.2f\n", min );
+        else if ( num > max ) printf( "O n√∫mero n√£o pode ser maior que %.2f\n", max );
 
     } while ( controlo == 0 || num < min || num > max );
 
@@ -86,7 +88,7 @@ void ler_string( const char* msg, char out[], int tamanho_max, int apagar_newlin
         limpa_stdin();
         tamanho = strlen( out );
 
-        if ( tamanho == 1 ) printf( "Dever· inserir pelo menos um caracter.\n" );
+        if ( tamanho == 1 ) printf( "Dever√° inserir pelo menos um caracter.\n" );
 
     } while ( tamanho == 1 );
 
@@ -94,8 +96,92 @@ void ler_string( const char* msg, char out[], int tamanho_max, int apagar_newlin
         out[tamanho - 1] = '\0';
 }
 
+int procurar_teste( t_teste* p_teste, int id, int qt_testes )
+{
+    for ( int i = 0; i < qt_testes; i++ )
+    {
+        if ( id == p_teste[i].id )
+            return i;
+    }
+
+    return -1;
+}
+
+int qt_testes_data( t_teste *p_teste, int qt_testes, t_data data )
+{
+    int contador = 0;
+
+    for ( int i = 0; i < qt_testes; i++ )
+    {
+        if ( p_teste[i].data.ano == data.ano && p_teste[i].data.dia == data.dia && p_teste[i].data.mes == data.mes )
+            contador++;
+    }
+
+    return contador;
+}
+
+t_teste ler_teste( t_teste *p_teste, int qt_testes, t_membro *p_membro, int qt_membros )
+{
+    t_teste teste = { 0 };
+    int pos = -1;
+
+    do
+    {
+        teste.id = ler_inteiro( "Insira o id do teste", 1, 9999 );
+
+        pos = procurar_teste( p_teste, teste.id, qt_testes );
+
+        if ( pos != -1 ) printf( "J√° existe um teste com esse ID.\n" );
+    } while ( pos != -1 );
+
+    do
+    {
+        teste.data = ler_data( "Data do teste", 2021 );
+
+        do
+        {
+            teste.tipo = ler_char( "Introduza o tipo de teste:\n[P] - PCR\n[A] - Antig√©nio\n" );
+
+            if ( teste.tipo != 'A' && teste.tipo != 'P' ) printf( "Introduza uma op√ß√£o v√°lida" );
+
+        } while ( teste.tipo != 'A' && teste.tipo != 'P' );
+
+        if ( teste.tipo == 'P' && qt_testes_data( p_teste, qt_testes, teste.data ) >= 15 )
+            printf( "N√£o se pode efetuar mais do que 15 testes PCR por dia.\n" );
+    } while ( teste.tipo == 'P' && qt_testes_data( p_teste, qt_testes, teste.data ) >= 15 );
+
+
+    teste.hora = ler_hora( "Introduza a hora do teste" );
+
+    do
+    {
+        teste.num_utente = ler_inteiro( "Introduza o numero de utente do membro a ser testado", 1, 9999 );
+
+        pos = procurar_membro( p_membro, teste.num_utente, qt_membros );
+
+        if ( pos == -1 ) printf( "N√£o existe nenhum membro com esse numero de utente.\n" );
+
+    } while ( pos == -1 );
+
+    teste.duracao.hora = 0;
+    teste.duracao.minuto = 0;
+    teste.resultado = -1;
+
+    return teste;
+}
+
+t_hora ler_hora( const char* msg )
+{
+    t_hora hora;
+
+    printf( "%s:\n", msg );
+
+    hora.hora = ler_inteiro( "Hora: ", 0, 24 );
+    hora.minuto = ler_inteiro( "Minuto: ", 0, 59 );
+}
+
 //Le uma data com um ano minimo (min_ano)
-//CÛdigo fornecido pelo poressor e adaptado ao projeto
+//C√≥digo fornecido pelo poressor e adaptado ao projeto
 t_data ler_data( const char* msg, int min_ano )
 {
     t_data data;
@@ -104,12 +190,12 @@ t_data ler_data( const char* msg, int min_ano )
     printf( "%s:\n" , msg );
 
     data.ano = ler_inteiro( "Ano", min_ano, 2100 );
-    data.mes = ler_inteiro( "MÍs", 1, 12 );
+    data.mes = ler_inteiro( "M√™s", 1, 12 );
 
     switch ( data.mes )
     {
         case 2:
-            if ( data.ano % 400 == 0 || data.ano % 4 == 0 || data.ano % 100 != 0 ) // Verificar se È um ano bisexto
+            if ( data.ano % 400 == 0 || data.ano % 4 == 0 || data.ano % 100 != 0 ) // Verificar se √© um ano bisexto
                 max_mes = 29;
             else
                 max_mes = 28;
@@ -138,16 +224,16 @@ void hora_string ( char out[], t_hora hora) // Transforma uma hora em string
     sprintf( out, "%2d:%2d", hora.hora, hora.minuto );
 }
 
-int procurar_membro( t_membro membros[], int num_utente, int qt_membros ) // Retorna a posiÁ„o do membro encontrado
+int procurar_membro( t_membro *membros, int num_utente, int qt_membros ) // Retorna a posi√ß√£o do membro encontrado
 {
     // num utente = numero de utente do membro a encontrar
     int pos = -1;
 
-    for ( int i = 0; i < qt_membros; i++ ) // correr todas as posiÁıes do vetor
+    for ( int i = 0; i < qt_membros; i++ ) // correr todas as posi√ß√µes do vetor
     {
-        if ( membros[i].num_utente == num_utente ) // Se o numero de utente da posiÁ„o 'i' do vetor for igual ao numero de utente a procurar
+        if ( membros[i].num_utente == num_utente ) // Se o numero de utente da posi√ß√£o 'i' do vetor for igual ao numero de utente a procurar
         {
-            // guardar a posiÁ„o e sair do loop
+            // guardar a posi√ß√£o e sair do loop
             pos = i;
             break;
         }
@@ -156,7 +242,7 @@ int procurar_membro( t_membro membros[], int num_utente, int qt_membros ) // Ret
     return pos;
 }
 
-t_membro ler_membro( t_membro m[], int num_membros )
+t_membro ler_membro( t_membro *m, int num_membros )
 {
     t_membro membro;
     int pos = 0;
@@ -177,17 +263,17 @@ t_membro ler_membro( t_membro m[], int num_membros )
 
     do
     {
-        membro.tipo = toupper( ler_char( "[E] - Estudante\n[D] - Docente\n[T] - Tecnico\nTipo de membro" )); // o caracter inserido È transformado em upper
-    } while ( membro.tipo != 'E' && membro.tipo != 'D' && membro.tipo != 'T' ); // Verifica se È um caracter valido para o tipo de membro
+        membro.tipo = toupper( ler_char( "[E] - Estudante\n[D] - Docente\n[T] - Tecnico\nTipo de membro" )); // o caracter inserido √© transformado em upper
+    } while ( membro.tipo != 'E' && membro.tipo != 'D' && membro.tipo != 'T' ); // Verifica se √© um caracter valido para o tipo de membro
 
     do
     {
-        membro.estado_confinamento = toupper( ler_char( "[N] - Nao confinado\n[Q] - Quarentena\n[I] - Isolamento profilatico\nEstado do confinamento" )); // o caracter inserido È transformado em upper
-    } while ( membro.estado_confinamento != 'N' && membro.estado_confinamento != 'I' && membro.estado_confinamento != 'Q' ); // Verifica se È um caracter valido para o estado de confinamento
+        membro.estado_confinamento = toupper( ler_char( "[N] - Nao confinado\n[Q] - Quarentena\n[I] - Isolamento profilatico\nEstado do confinamento" )); // o caracter inserido √© transformado em upper
+    } while ( membro.estado_confinamento != 'N' && membro.estado_confinamento != 'I' && membro.estado_confinamento != 'Q' ); // Verifica se √© um caracter valido para o estado de confinamento
 
     membro.vacinacao = ler_inteiro( "Numero de vacinas", 0, 3 );
 
-    if ( membro.vacinacao > 0 ) // Caso o membro j· tenha sido vacinado, pedir a data da ultima vacina
+    if ( membro.vacinacao > 0 ) // Caso o membro j√° tenha sido vacinado, pedir a data da ultima vacina
     {
         membro.ultima_vacina = ler_data( "Introduza a data da ultima vacinacao", membro.ano_nascimento );
     }
@@ -198,10 +284,10 @@ t_membro ler_membro( t_membro m[], int num_membros )
 void listar_membros( t_membro *membros, int qt_membros )
 {
 
-    if ( membros == NULL ) // Prevenir que o programe crashe, n„o necess·rio mas evita perca de tempo enquanto se debuga/programa
+    if ( membros == NULL ) // Prevenir que o programe crashe, n√£o necess√°rio mas evita perca de tempo enquanto se debuga/programa
         return;
 
-    for ( int i = 0; i < qt_membros; i++ ) //Mostrar informaÁ„o f·cil de compreender
+    for ( int i = 0; i < qt_membros; i++ ) //Mostrar informa√ß√£o f√°cil de compreender
     {
         printf( "\nUtente (%d): %s\n", membros[i].num_utente, membros[i].nome );
 
@@ -217,7 +303,7 @@ void listar_membros( t_membro *membros, int qt_membros )
 
         printf( "Ano de nascimento: %d\n", membros[i].ano_nascimento );
 
-        switch ( membros[i].estado_confinamento ) //Mostrar informaÁ„o f·cil de compreender
+        switch ( membros[i].estado_confinamento ) //Mostrar informa√ß√£o f√°cil de compreender
         {
             case 'N': printf( "Estado de confinamento: Nao\n" );
                 break;

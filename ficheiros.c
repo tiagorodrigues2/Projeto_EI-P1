@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ficheiros.h"
 
@@ -46,19 +47,19 @@ t_membro* carregar_membros( int *qt_membros )
         {
             printf( "**ERRO AO LER QUANTIDADE DE DADOS**\n" );
             fclose( p_file );
-            return;
+            return NULL;
         }
 
         if ( *qt_membros > 0 ) /* Se houver mais que um... */
         {
-            m = malloc( *qt_membros * sizeof(t_membro) ); /* Alocar o espaço na memoria necessitado */
+            m = malloc( *qt_membros * sizeof(t_membro) ); /* Alocar o espaï¿½o na memoria necessitado */
 
-            controlo = fread( m, sizeof(t_membro), *qt_membros, p_file ); /* Ler dados dos membros académicos */
+            controlo = fread( m, sizeof(t_membro), *qt_membros, p_file ); /* Ler dados dos membros acadï¿½micos */
             if ( controlo != *qt_membros )
             {
                 printf( "**ERRO AO LER DADOS**\n" );
                 fclose( p_file );
-                return;
+                return NULL;
             }
         }
 

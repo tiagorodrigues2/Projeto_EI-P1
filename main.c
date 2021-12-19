@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
+#include <ctype.h>
 
 #include "dados.h"
 #include "ficheiros.h"
@@ -22,9 +23,8 @@ int main()
     int qt_testes_realizados = 0;
     int qt_vacinados = 0;
 
-    t_membro *membros = NULL;                   /* Membros da comunidade acadÈmica */
-    t_teste *testes = NULL;                     /* Testes efetuados */
-    t_teste_agendado *agendados = NULL;         /* Testes agendados */
+    t_membro *membros = NULL;                   /* Membros da comunidade acad√©mica */
+    t_teste *testes = NULL;                     /* Testes efetuados/agendados */
 
     membros = carregar_membros( &qt_membros );
 
@@ -36,27 +36,28 @@ int main()
 
         switch ( opcao )
         {
-            case 'I': /* Inserir membro acadÈmico */
+            case 'I': /* Inserir membro acad√©mico */
                 membros = adicionar_membro( membros, &qt_membros );
-                gravar_membros( membros, qt_membros );                  /* Gravar automaticamente para poupar espaÁo no menu e evitar'esquecimentos' */
+                gravar_membros( membros, qt_membros );                  /* Gravar automaticamente para poupar espa√ßo no menu e evitar'esquecimentos' */
                 break;
-            case 'L': /* Listar membros acadÈmicos */
+            case 'L': /* Listar membros acad√©micos */
                 listar_membros( membros, qt_membros );
                 break;
             case 'A': /* Atualizar membro */
                 atualizar_estados( membros, qt_membros );
                 break;
+            case 'T':
 
-            default: printf( "Insira uma opÁ„o valida.\n" );
+                break;
+            default: printf( "Insira uma op√ß√£o valida.\n" );
         }
 
     } while ( opcao != 'F' );
 
-    /* Libertar espaÁo da memÛria */
+    /* Libertar espa√ßo da mem√≥ria */
 
     free( membros );
     free( testes );
-    free( agendados );
 
     return 0;
 }
@@ -65,12 +66,13 @@ char menu( int qt_membros, int qt_testes_agendados, int qt_testes, int qt_vacina
 {
     char opt = '\0';
     printf( "\n---------------------------------------MENU---------------------------------------\n" );
-    printf( "N˙mero de membros: %13d\t\tNumero de testes: %13d\n", qt_membros, qt_testes );
-    printf( "N˙mero de membros vacinados: %3d\t\tNumero de testes agendados: %3d\n\n", qt_vacinados, qt_testes_agendados );
-    printf( "[I] - Inserir membro acadÈmico\n" );
-    printf( "[L] - Listar membros acadÈmicos\n" );
-    printf( "[A] - Atualizar estado de vacinaÁ„o/confinamento\n" );
-    opt = ler_char( "\n\t\tOpc„o" );
+    printf( "N√∫mero de membros: %13d\t\tNumero de testes: %13d\n", qt_membros, qt_testes );
+    printf( "N√∫mero de membros vacinados: %3d\t\tNumero de testes agendados: %3d\n\n", qt_vacinados, qt_testes_agendados );
+    printf( "[I] - Inserir membro acad√©mico\n" );
+    printf( "[L] - Listar membros acad√©micos\n" );
+    printf( "[A] - Atualizar estado de vacina√ß√£o/confinamento\n\n" );
+    printf( "[T] - Agendar um teste\n" );
+    opt = ler_char( "\n\t\tOpc√£o" );
     return toupper( opt ); // turnar o caracter maiosculo
 }
 
@@ -79,7 +81,7 @@ t_membro* adicionar_membro( t_membro *m, int *qt_membros )
 
     if ( *qt_membros >= MAX_MEMBROS )
     {
-        printf( "Excedido o numero m·ximo de membros acadÈmicos. (%d)\n", MAX_MEMBROS );
+        printf( "Excedido o numero m√°ximo de membros acad√©micos. (%d)\n", MAX_MEMBROS );
     }
 
     if ( *qt_membros == 0 ) // Se o pointeiro ainda nao foi inicializado...
@@ -88,17 +90,17 @@ t_membro* adicionar_membro( t_membro *m, int *qt_membros )
 
         if ( m == NULL )
         {
-            printf( "Erro ao alocar memÛria.\n" );
+            printf( "Erro ao alocar mem√≥ria.\n" );
             return NULL;
         }
     }
-    else // Se ja foi inicizliado, aloca mais um espaÁo
+    else // Se ja foi inicizliado, aloca mais um espa√ßo
     {
         m = realloc( m, *qt_membros * sizeof( t_membro ) );
 
         if ( m == NULL )
         {
-            printf( "Erro ao alocar memÛria.\n" );
+            printf( "Erro ao alocar mem√≥ria.\n" );
             return NULL;
         }
     }
@@ -106,7 +108,7 @@ t_membro* adicionar_membro( t_membro *m, int *qt_membros )
     m[*qt_membros] = ler_membro( m, *qt_membros ); // Le os dados do membro
 
     (*qt_membros)++; // Incrementa a quantidade de membros
-    return m; // Retorna o endereÁo do ponteiro (Ver relatÛrio)
+    return m; // Retorna o endere√ßo do ponteiro (Ver relat√≥rio)
 }
 
 void alterar_confinamento( t_membro* m, int qt_membros )
@@ -116,23 +118,23 @@ void alterar_confinamento( t_membro* m, int qt_membros )
 
     do
     {
-        num_utente = ler_inteiro( "Introduza o n˙mero de utente do membro acadÈmico a atualizar", 1, 9999 ); /* Pedir numero de utente do utilizador a atualizar */
+        num_utente = ler_inteiro( "Introduza o n√∫mero de utente do membro acad√©mico a atualizar", 1, 9999 ); /* Pedir numero de utente do utilizador a atualizar */
 
         pos = procurar_membro( m, num_utente, qt_membros );
 
         if ( pos == -1 )
-            printf( "N„o foi possivel encontrar membro acadÈmico.\n" );
+            printf( "N√£o foi possivel encontrar membro acad√©mico.\n" );
     } while ( pos == -1 );
 
     printf( "Estado de confinamento atual: " ); /* Mostrar estado de confinamenteo atual para referencia  */
 
     switch ( m[pos].estado_confinamento )
     {
-        case 'N': printf( "N„o confinado\n" );
+        case 'N': printf( "N√£o confinado\n" );
             break;
         case 'Q': printf( "Quarentena\n" );
             break;
-        case 'I': printf( "Isolamento profil·tico\n" );
+        case 'I': printf( "Isolamento profil√°tico\n" );
             break;
     }
 
@@ -140,12 +142,12 @@ void alterar_confinamento( t_membro* m, int qt_membros )
 
     do
     {
-        m[pos].estado_confinamento = toupper( ler_char( "Introduza o novo estado de confinamento:\n[N] - N„o Confinado\n[Q] - Quarentena\n[I] - Isolamento Profil·tico\n" ) );
+        m[pos].estado_confinamento = toupper( ler_char( "Introduza o novo estado de confinamento:\n[N] - N√£o Confinado\n[Q] - Quarentena\n[I] - Isolamento Profil√°tico\n" ) );
 
-        check = ( m[pos].estado_confinamento != 'N' && m[pos].estado_confinamento != 'Q' && m[pos].estado_confinamento !='I' ); /* VerificaÁ„o se o caracter È algum em (N, I, Q) */
+        check = ( m[pos].estado_confinamento != 'N' && m[pos].estado_confinamento != 'Q' && m[pos].estado_confinamento !='I' ); /* Verifica√ß√£o se o caracter √© algum em (N, I, Q) */
 
         if ( check )
-            printf( "Insira uma opÁ„o v·lida.\n" );
+            printf( "Insira uma op√ß√£o v√°lida.\n" );
     } while ( check );
 }
 
@@ -156,31 +158,50 @@ void alterar_vacinacao( t_membro *m, int qt_membros )
 
     do
     {
-        num_utente = ler_inteiro( "Introduza o n˙mero de utente do membro acadÈmico a atualizar", 1, 9999 ); /* Pedir numero de utente de membro a ser atualizado */
+        num_utente = ler_inteiro( "Introduza o n√∫mero de utente do membro acad√©mico a atualizar", 1, 9999 ); /* Pedir numero de utente de membro a ser atualizado */
 
         pos = procurar_membro( m, num_utente, qt_membros );
 
         if ( pos == -1 )
-            printf( "N„o foi possivel encontrar membro acadÈmico.\n" );
+            printf( "N√£o foi possivel encontrar membro acad√©mico.\n" );
     } while ( pos == -1 );
 
     if ( m[pos].vacinacao != 0 )
-        printf( "VacinaÁ„o atual: %d Dose\n", m[pos].vacinacao ); /* Mostrar numero de vacinas para referencia */
+        printf( "Vacina√ß√£o atual: %d Dose\n", m[pos].vacinacao ); /* Mostrar numero de vacinas para referencia */
     else
-        printf( "VacinaÁ„o atual: Sem vacina\n" );
+        printf( "Vacina√ß√£o atual: Sem vacina\n" );
 
-    m[pos].vacinacao = ler_inteiro( "Introduza o novo n˙mero de vacinas", 0, 3 ); /* Pedir novo numero de vacinas */
+    m[pos].vacinacao = ler_inteiro( "Introduza o novo n√∫mero de vacinas", 0, 3 ); /* Pedir novo numero de vacinas */
 
-    if ( m[pos].vacinacao == 0 )    /* Se o novo numero de vacinaÁ„o for zero, limpar a data da ultima vacinaÁ„o */
+    if ( m[pos].vacinacao == 0 )    /* Se o novo numero de vacina√ß√£o for zero, limpar a data da ultima vacina√ß√£o */
     {
         m[pos].ultima_vacina.ano = 0;
         m[pos].ultima_vacina.dia = 0;
         m[pos].ultima_vacina.mes = 0;
     }
-    else                            /* Se n„o, perguntar a nova data... */
+    else                            /* Se n√£o, perguntar a nova data... */
     {
-        m[pos].ultima_vacina = ler_data( "Insira a data da ultima vacinaÁ„o", m[pos].ano_nascimento );
+        m[pos].ultima_vacina = ler_data( "Insira a data da ultima vacina√ß√£o", m[pos].ano_nascimento );
     }
+}
+
+void agendar_teste( t_teste* p_teste, int *p_qt_testes, t_membro *p_membros, int qt_membros )
+{
+
+    if ( p_teste == NULL )
+        p_teste = malloc( sizeof(t_teste) );
+
+    else
+        p_teste = realloc( p_teste, *p_qt_testes * sizeof(t_teste) );
+
+    if ( p_teste == NULL )
+    {
+        printf( "***ERRO AO ALOCAR ESPA√áO NA MEM√ìRIA***\n" );
+        return;
+    }
+
+    p_teste[*p_qt_testes] = ler_teste( p_teste, *p_qt_testes, p_membros, qt_membros );
+    (*p_qt_testes)++;
 }
 
 void atualizar_estados( t_membro *m, int qt_membros ) /* Sub Menu para atualizar membro */
@@ -189,10 +210,10 @@ void atualizar_estados( t_membro *m, int qt_membros ) /* Sub Menu para atualizar
 
     do
     {
-        printf( "\n[V] - Alterar estado de VacinaÁ„o\n[C] - Alterar estado de Confinamento\n" );
-        sub_opt = toupper( ler_char( "\t\tOpÁ„o --> ") );
+        printf( "\n[V] - Alterar estado de Vacina√ß√£o\n[C] - Alterar estado de Confinamento\n" );
+        sub_opt = toupper( ler_char( "\t\tOp√ß√£o --> ") );
 
-        if ( sub_opt != 'V' && sub_opt != 'C' ) printf( "Insira uma opÁ„o v·lida." );
+        if ( sub_opt != 'V' && sub_opt != 'C' ) printf( "Insira uma op√ß√£o v√°lida." );
 
     } while ( sub_opt != 'V' && sub_opt != 'C' );
 

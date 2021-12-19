@@ -33,19 +33,14 @@ typedef struct
     int id;
     char tipo;
     t_data data;
-    int num_utente;
-    int resultado;              // Positivo (1) ou negativo (0) ou inconclusivo ( -1 )
     t_hora hora;
-    t_hora duracao;
-} t_teste;
+    int num_utente;
 
-typedef struct
-{
-    t_data data;
-    t_hora hora;
-    char tipo;                  //PCR / antig�nio
-    int num_utente;
-} t_teste_agendado;
+    /* Estes campos são reservados para depois do teste ser efetuado...*/
+    int resultado;              // Positivo (1) ou negativo (0) ou inconclusivo ( -1 )
+    t_hora duracao;             // Duração do teste... Se for maior que zero, o teste foi feito.
+
+} t_teste;
 
 extern void limpa_stdin( void );
 extern int ler_inteiro( const char*, int, int );
@@ -55,8 +50,11 @@ extern char ler_char( const char* );
 extern t_data ler_data( const char*, int  );
 extern void data_string( char[], t_data );
 extern void hora_string ( char[], t_hora );
-extern int procurar_membro( t_membro[], int, int );
-extern t_membro ler_membro( t_membro[], int );
+extern int procurar_membro( t_membro*, int, int );
+extern t_membro ler_membro( t_membro*, int );
 extern void listar_membros( t_membro*, int );
+extern int procurar_teste( t_teste*, int, int );
+extern t_teste ler_teste( t_teste*, int, t_membro*, int );
+extern t_hora ler_hora();
 
 #endif // DADOS_H_INCLUDED
