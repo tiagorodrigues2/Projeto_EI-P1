@@ -178,6 +178,8 @@ t_hora ler_hora( const char* msg )
 
     hora.hora = ler_inteiro( "Hora: ", 0, 24 );
     hora.minuto = ler_inteiro( "Minuto: ", 0, 59 );
+
+    return hora;
 }
 
 //Le uma data com um ano minimo (min_ano)
@@ -212,16 +214,6 @@ t_data ler_data( const char* msg, int min_ano )
 
 
     return data;
-}
-
-void data_string( char out[], t_data data ) // Transforma uma data em string
-{
-    sprintf( out, "%2d/%2d/%4d", data.dia, data.mes, data.ano );
-}
-
-void hora_string ( char out[], t_hora hora) // Transforma uma hora em string
-{
-    sprintf( out, "%2d:%2d", hora.hora, hora.minuto );
 }
 
 int procurar_membro( t_membro *membros, int num_utente, int qt_membros ) // Retorna a posição do membro encontrado
@@ -282,7 +274,7 @@ t_membro ler_membro( t_membro *m, int num_membros )
     return membro;
 }
 
-void listar_membros( t_membro *membros, int qt_membros )
+void listar_membros( t_membro *membros, int qt_membros, t_teste *p_testes, int qt_testes )              // qt_testes = testes agendados + testes realizados
 {
 
     if ( membros == NULL ) // Prevenir que o programe crashe, não necessário mas evita perca de tempo enquanto se debuga/programa
@@ -318,13 +310,42 @@ void listar_membros( t_membro *membros, int qt_membros )
 
         if ( membros[i].vacinacao ) // Se o membro for vacinado, mostrar a data
         {
-            char data_str[9];
-            data_string( data_str, membros[i].ultima_vacina );
-            printf( "Data da ultima vacinacao: %s\n", data_str );
+            printf( "Data da ultima vacinacao: %02d/%02d/%02d\n\n", membros[i].ultima_vacina.dia, membros[i].ultima_vacina.mes, membros[i].ultima_vacina.ano );
         }
 
         /* Verificar se tem testes agendados/realizados */
 
+        if ( p_testes == NULL ) /* Se p_testes for nulo, seguir para o proximo clico...*/
+            continue;
+
+        for ( int i2 = 0; i2 < qt_testes; i2++ )       /* Ciclo por todos os testes */
+        {
+            if ( membros[i].num_utente == p_testes[i2].num_utente )
+            {
+                if ( p_testes[i2].duracao.minuto + p_testes[i2].duracao.hora > 0 )
+                    printf( "TESTE REALIZADO " );
+                else
+                    printf( "TESTE AGENDADO " );
+
+                printf( "ID: %d\n", p_testes[i2].id );
+                printf( "Tipo: %s\n", p_testes[i2].tipo == 'P' ? "PCR" : "Antigenio" );
+                printf( "Data: %02d/%02d/%02d\n", p_testes[i2].data.dia, p_testes[i2].data.mes, p_testes[i2].data.ano );
+                printf( "Hora: %02d:%02d\n", p_testes[i2].hora.hora, p_testes[i2].hora.minuto );
+
+                if ( p_testes[i2].duracao.minuto + p_testes[i2].duracao.hora > 0 )
+                {
+                    printf( "Duracao do teste: %02d:%02d\n", p_testes[i2].duracao.hora, p_testes[i2].duracao.minuto );
+                    printf( "Resultado: " );
+                    switch ( p_testes[i2].resultado )
+                    {
+                        case -1: printf( "Inconclusivo\n" ); break;
+                        case 0: printf( "Negativo\n" ); break;
+                        case 1: printf( "Positivo\n" ); break;
+                    }
+                }
+                printf( "\n" );
+            }
+        }
     }
 }
 

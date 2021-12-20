@@ -25,6 +25,7 @@ int main()
     t_teste *testes = NULL;                     /* Testes efetuados/agendados */
 
     membros = carregar_membros( &qt_membros );
+    testes = carregar_testes( &qt_testes_realizados, &qt_testes_agendados );
 
     char opcao = '\0';
 
@@ -36,16 +37,21 @@ int main()
         {
             case 'I': /* Inserir membro académico */
                 membros = adicionar_membro( membros, &qt_membros );
-                gravar_membros( membros, qt_membros );                  /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
+                gravar_membros( membros, qt_membros );                                  /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
                 break;
             case 'L': /* Listar membros académicos */
-                listar_membros( membros, qt_membros );
+                listar_membros( membros, qt_membros, testes, qt_testes_agendados + qt_testes_realizados );
                 break;
             case 'A': /* Atualizar membro */
                 atualizar_estados( membros, qt_membros );
+                gravar_membros( membros, qt_membros );                                  /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
                 break;
             case 'T':
                 testes = agendar_teste( testes, &qt_testes_agendados, qt_testes_realizados, membros, qt_membros );
+                gravar_testes( testes, qt_testes_realizados, qt_testes_agendados );     /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
+                break;
+            case 'K': /* Listar testes */
+
                 break;
             default: printf( "Insira uma opção valida.\n" );
         }
@@ -70,6 +76,8 @@ char menu( int qt_membros, int qt_testes_agendados, int qt_testes, int qt_vacina
     printf( "[L] - Listar membros academicos\n" );
     printf( "[A] - Atualizar estado de vacinacao/confinamento\n\n" );
     printf( "[T] - Agendar um teste\n" );
+    printf( "[K] - Listar testes\n" );
+    printf( "\n[F] - Sair\n" );
     opt = ler_char( "\n\t\tOpcao" );
     return toupper( opt ); // turnar o caracter maiosculo
 }
@@ -195,7 +203,7 @@ t_teste* agendar_teste( t_teste* p_teste, int *p_qt_testes_agendados, int qt_tes
     if ( p_teste == NULL )
     {
         printf( "***ERRO AO ALOCAR ESPACO NA MEMORIA***\n" );
-        return;
+        return NULL;
     }
 
     p_teste[*p_qt_testes_agendados + qt_testes_realizados] = ler_teste( p_teste, qt_testes_realizados, *p_qt_testes_agendados, p_membros, qt_membros );

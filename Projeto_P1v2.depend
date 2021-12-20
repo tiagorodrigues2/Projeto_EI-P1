@@ -19,25 +19,25 @@
 	<stdio.h>
 	"ficheiros.h"
 
-1639994015 source:c:\users\massas\desktop\projeto_p1\dados.c
+1640017513 source:c:\users\massas\desktop\projeto_p1\dados.c
 	<stdio.h>
 	<string.h>
 	<ctype.h>
 	"dados.h"
 
-1639992359 c:\users\massas\desktop\projeto_p1\dados.h
+1640017053 c:\users\massas\desktop\projeto_p1\dados.h
 
-1639993999 source:c:\users\massas\desktop\projeto_p1\main.c
+1640017373 source:c:\users\massas\desktop\projeto_p1\main.c
 	<stdio.h>
 	<stdlib.h>
 	<ctype.h>
 	"dados.h"
 	"ficheiros.h"
 
-1639757774 c:\users\massas\desktop\projeto_p1\ficheiros.h
+1640015451 c:\users\massas\desktop\projeto_p1\ficheiros.h
 	"dados.h"
 
-1639990996 source:c:\users\massas\desktop\projeto_p1\ficheiros.c
+1640018322 source:c:\users\massas\desktop\projeto_p1\ficheiros.c
 	<stdio.h>
 	<stdlib.h>
 	"ficheiros.h"

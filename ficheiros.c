@@ -64,22 +64,77 @@ t_membro* carregar_membros( int *qt_membros )
         }
 
     }
-    else
-    {
-        printf( "**ERRO AO ABRIR FICHEIRO PARA LER BINARIO**\n" );
-    }
 
     return m;
 }
 
-void gravar_testes( t_testes* p_teste, int qt_realizados, int qt_agendados )
+void gravar_testes( t_teste* p_teste, int qt_realizados, int qt_agendados )
 {
+    FILE *p_file = fopen( "testes.dat", "wb" );
+    size_t controlo = 0;
 
+    if ( p_file != NULL )
+    {
+        controlo += fwrite( &qt_realizados, sizeof(int), 1, p_file );
+        controlo += fwrite( &qt_agendados, sizeof(int), 1, p_file );
+
+        if ( controlo != 2 )
+        {
+            printf( "**ERRO AO GUARDAR QUANTIDADE DE DADOS**\n" );
+            fclose( p_file );
+            return;
+        }
+
+        controlo = fwrite( &p_teste, sizeof(t_teste), qt_agendados + qt_realizados, p_file );
+
+        if ( controlo != qt_agendados + qt_realizados )
+        {
+            printf( "**ERRO AO GUARDAR DADOS**\n" );
+            fclose( p_file );
+            return;
+        }
+
+        fclose( p_file );
+    }
 }
 
 t_teste* carregar_testes( int *p_realizados, int *p_agendados )
 {
     t_teste *p_teste = NULL;
+    FILE *p_file = fopen( "testes.dat", "rb" );
+    size_t controlo = 0;
+
+    if ( p_file != NULL )
+    {
+        controlo += fread( p_realizados, sizeof(int), 1, p_file );
+        controlo += fread( p_agendados, sizeof(int), 1, p_file );
+
+        if ( controlo != 2 )
+        {
+            printf( "**ERRO AO LER QUANTIDADE DE REGISTOS**\n" );
+            fclose( p_file );
+            return NULL;
+        }
+
+        if ( *p_realizados + *p_agendados == 0 )
+            return NULL;
+
+        p_teste = malloc( sizeof(t_teste) * ((*p_realizados) + (*p_agendados)));
+        controlo = fread( p_teste, sizeof(t_teste), ((*p_realizados) + (*p_agendados)), p_file );
+
+        if ( controlo != ((*p_realizados) + (*p_agendados)) )
+        {
+            printf( "**ERRO AO LER REGISTOS**\n" );
+            fclose( p_file );
+            return NULL;
+        }
+
+        fclose( p_file );
+    }
+    else
+    {
+        printf( "**ERRO AO ABRIR FICHEIRO PARA LER BINARIO**\n" );
+    }
 
     return p_teste;
 }
