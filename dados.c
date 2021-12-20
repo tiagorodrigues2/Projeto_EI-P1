@@ -28,7 +28,7 @@ char ler_char( const char* msg )
         controlo = scanf( "%c", &car );
         limpa_stdin();
 
-        if ( controlo != 1 ) printf( "Não foi possivel ler um caracter.\n" );
+        if ( controlo != 1 ) printf( "Nao foi possivel ler um caracter.\n" );
 
     } while ( controlo != 1 );
 
@@ -47,9 +47,9 @@ int ler_inteiro( const char* msg, int min, int max )
         controlo = scanf( "%d", &num );
         limpa_stdin();
 
-        if ( controlo == 0 ) printf( "Não foi possivel ler nenhum numero inteiro.\n" );
-        else if ( num < min ) printf( "O número não pode ser menor que %d\n", min );
-        else if ( num > max ) printf( "O número não pode ser maior que %d\n", max );
+        if ( controlo == 0 ) printf( "Nao foi possivel ler nenhum numero inteiro.\n" );
+        else if ( num < min ) printf( "O numero não pode ser menor que %d\n", min );
+        else if ( num > max ) printf( "O numero não pode ser maior que %d\n", max );
 
     } while ( controlo == 0 || num < min || num > max );
 
@@ -68,9 +68,9 @@ int ler_float( const char* msg, float min, float max )
         controlo = scanf( "%f", &num );
         limpa_stdin();
 
-        if ( controlo == 0 ) printf( "Não foi possivel ler nenhum número real.\n" );
-        else if ( num < min ) printf( "O número não pode ser menor que %.2f\n", min );
-        else if ( num > max ) printf( "O número não pode ser maior que %.2f\n", max );
+        if ( controlo == 0 ) printf( "Nao foi possivel ler nenhum numero real.\n" );
+        else if ( num < min ) printf( "O numero nao pode ser menor que %.2f\n", min );
+        else if ( num > max ) printf( "O numero nao pode ser maior que %.2f\n", max );
 
     } while ( controlo == 0 || num < min || num > max );
 
@@ -88,7 +88,7 @@ void ler_string( const char* msg, char out[], int tamanho_max, int apagar_newlin
         limpa_stdin();
         tamanho = strlen( out );
 
-        if ( tamanho == 1 ) printf( "Deverá inserir pelo menos um caracter.\n" );
+        if ( tamanho == 1 ) printf( "Devera inserir pelo menos um caracter.\n" );
 
     } while ( tamanho == 1 );
 
@@ -120,7 +120,7 @@ int qt_testes_data( t_teste *p_teste, int qt_testes, t_data data )
     return contador;
 }
 
-t_teste ler_teste( t_teste *p_teste, int qt_testes, t_membro *p_membro, int qt_membros )
+t_teste ler_teste( t_teste *p_teste, int qt_testes_agendados, int qt_testes_realizados, t_membro *p_membro, int qt_membros )
 {
     t_teste teste = { 0 };
     int pos = -1;
@@ -129,10 +129,10 @@ t_teste ler_teste( t_teste *p_teste, int qt_testes, t_membro *p_membro, int qt_m
     {
         teste.id = ler_inteiro( "Insira o id do teste", 1, 9999 );
 
-        pos = procurar_teste( p_teste, teste.id, qt_testes );
+        pos = procurar_teste( p_teste, teste.id, qt_testes_realizados + qt_testes_agendados );
 
-        if ( pos != -1 ) printf( "Já existe um teste com esse ID.\n" );
-    } while ( pos != -1 );
+        if ( pos != -1 ) printf( "Ja existe um teste com esse ID.\n" );
+    } while ( pos != -1 );                                                                                     /* Verificacao se já existe teste com o id fornecido*/
 
     do
     {
@@ -140,15 +140,15 @@ t_teste ler_teste( t_teste *p_teste, int qt_testes, t_membro *p_membro, int qt_m
 
         do
         {
-            teste.tipo = ler_char( "Introduza o tipo de teste:\n[P] - PCR\n[A] - Antigénio\n" );
+            teste.tipo = toupper( ler_char( "Introduza o tipo de teste:\n[P] - PCR\n[A] - Antigenio\n" ) );
 
-            if ( teste.tipo != 'A' && teste.tipo != 'P' ) printf( "Introduza uma opção válida" );
+            if ( teste.tipo != 'A' && teste.tipo != 'P' ) printf( "Introduza uma opçao valida" );
 
-        } while ( teste.tipo != 'A' && teste.tipo != 'P' );
+        } while ( teste.tipo != 'A' && teste.tipo != 'P' );                                                                     /* Verificacao se o char lido é uma opcao valida */
 
-        if ( teste.tipo == 'P' && qt_testes_data( p_teste, qt_testes, teste.data ) >= 15 )
-            printf( "Não se pode efetuar mais do que 15 testes PCR por dia.\n" );
-    } while ( teste.tipo == 'P' && qt_testes_data( p_teste, qt_testes, teste.data ) >= 15 );
+        if ( teste.tipo == 'P' && qt_testes_data( p_teste, qt_testes_realizados + qt_testes_agendados, teste.data ) >= 15 )
+            printf( "Nao se pode efetuar mais do que 15 testes PCR por dia.\n" );
+    } while ( teste.tipo == 'P' && qt_testes_data( p_teste, qt_testes_realizados + qt_testes_agendados, teste.data ) >= 15 );    /* Verificao se já ha 15 testes pcr agendados na data fornecida */
 
 
     teste.hora = ler_hora( "Introduza a hora do teste" );
@@ -159,11 +159,11 @@ t_teste ler_teste( t_teste *p_teste, int qt_testes, t_membro *p_membro, int qt_m
 
         pos = procurar_membro( p_membro, teste.num_utente, qt_membros );
 
-        if ( pos == -1 ) printf( "Não existe nenhum membro com esse numero de utente.\n" );
+        if ( pos == -1 ) printf( "Nao existe nenhum membro com esse numero de utente.\n" );         /* Verificar se o numero de utente existe */
 
     } while ( pos == -1 );
 
-    teste.duracao.hora = 0;
+    teste.duracao.hora = 0;         /* Dados só fornecidos quando o teste for realizado... */
     teste.duracao.minuto = 0;
     teste.resultado = -1;
 
@@ -190,7 +190,7 @@ t_data ler_data( const char* msg, int min_ano )
     printf( "%s:\n" , msg );
 
     data.ano = ler_inteiro( "Ano", min_ano, 2100 );
-    data.mes = ler_inteiro( "Mês", 1, 12 );
+    data.mes = ler_inteiro( "Mes", 1, 12 );
 
     switch ( data.mes )
     {
@@ -278,6 +278,7 @@ t_membro ler_membro( t_membro *m, int num_membros )
         membro.ultima_vacina = ler_data( "Introduza a data da ultima vacinacao", membro.ano_nascimento );
     }
 
+
     return membro;
 }
 
@@ -321,6 +322,9 @@ void listar_membros( t_membro *membros, int qt_membros )
             data_string( data_str, membros[i].ultima_vacina );
             printf( "Data da ultima vacinacao: %s\n", data_str );
         }
+
+        /* Verificar se tem testes agendados/realizados */
+
     }
 }
 

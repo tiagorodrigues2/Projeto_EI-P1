@@ -71,3 +71,15 @@ t_membro* carregar_membros( int *qt_membros )
 
     return m;
 }
+
+void gravar_testes( t_testes* p_teste, int qt_realizados, int qt_agendados )
+{
+
+}
+
+t_teste* carregar_testes( int *p_realizados, int *p_agendados )
+{
+    t_teste *p_teste = NULL;
+
+    return p_teste;
+}

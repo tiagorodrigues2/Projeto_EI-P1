@@ -54,7 +54,7 @@ extern int procurar_membro( t_membro*, int, int );
 extern t_membro ler_membro( t_membro*, int );
 extern void listar_membros( t_membro*, int );
 extern int procurar_teste( t_teste*, int, int );
-extern t_teste ler_teste( t_teste*, int, t_membro*, int );
+extern t_teste ler_teste( t_teste*, int, int, t_membro*, int );
 extern t_hora ler_hora();
 
 #endif // DADOS_H_INCLUDED
