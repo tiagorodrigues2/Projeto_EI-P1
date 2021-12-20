@@ -85,7 +85,7 @@ void gravar_testes( t_teste* p_teste, int qt_realizados, int qt_agendados )
             return;
         }
 
-        controlo = fwrite( &p_teste, sizeof(t_teste), qt_agendados + qt_realizados, p_file );
+        controlo = fwrite( p_teste, sizeof(t_teste), qt_agendados + qt_realizados, p_file );
 
         if ( controlo != qt_agendados + qt_realizados )
         {

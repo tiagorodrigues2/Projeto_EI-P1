@@ -12,8 +12,9 @@ void alterar_vacinacao( t_membro*, int );
 void alterar_confinamento( t_membro*, int );
 void atualizar_estados( t_membro*, int );
 t_teste* agendar_teste( t_teste*, int*, int, t_membro*, int );
+void menu_listar_testes( t_teste*, int, t_membro*, int );
 
-int main()
+int main( void )
 {
 
     int qt_membros = 0;
@@ -46,11 +47,17 @@ int main()
                 atualizar_estados( membros, qt_membros );
                 gravar_membros( membros, qt_membros );                                  /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
                 break;
-            case 'T':
+            case 'T': // Agendar teste
                 testes = agendar_teste( testes, &qt_testes_agendados, qt_testes_realizados, membros, qt_membros );
                 gravar_testes( testes, qt_testes_realizados, qt_testes_agendados );     /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
                 break;
             case 'K': /* Listar testes */
+                menu_listar_testes( testes, qt_testes_agendados + qt_testes_realizados, membros, qt_membros );
+                break;
+            case 'E': // Alterar data de um teste
+
+                break;
+            case 'R': // Registar resultado de um teste
 
                 break;
             default: printf( "Insira uma opção valida.\n" );
@@ -70,16 +77,44 @@ char menu( int qt_membros, int qt_testes_agendados, int qt_testes, int qt_vacina
 {
     char opt = '\0';
     printf( "\n---------------------------------------MENU---------------------------------------\n" );
-    printf( "Numero de membros: %13d\t\tNumero de testes: %13d\n", qt_membros, qt_testes );
+    printf( "Numero de membros: %13d\t\tNumero de testes realizados: %2d\n", qt_membros, qt_testes );
     printf( "Numero de membros vacinados: %3d\t\tNumero de testes agendados: %3d\n\n", qt_vacinados, qt_testes_agendados );
     printf( "[I] - Inserir membro academico\n" );
     printf( "[L] - Listar membros academicos\n" );
     printf( "[A] - Atualizar estado de vacinacao/confinamento\n\n" );
     printf( "[T] - Agendar um teste\n" );
     printf( "[K] - Listar testes\n" );
+    printf( "[E] - Alterar data de um teste\n" );
+    printf( "[R] - Registar resultado de um teste\n" );
     printf( "\n[F] - Sair\n" );
     opt = ler_char( "\n\t\tOpcao" );
     return toupper( opt ); // turnar o caracter maiosculo
+}
+
+void menu_listar_testes( t_teste *p_teste, int qt_testes, t_membro *p_membro, int qt_membros )
+{
+    char sub_opt = '\0';
+    int grupo = 0;
+
+    if ( qt_testes == 0 )
+    {
+        printf( "Nao existem testes a mostrar.\n" );
+        return;
+    }
+
+    do
+    {
+        sub_opt = toupper( ler_char( "[A] - Testes agendados\n[R] - Testes realizados\n[T] - Todos\n\tOpcao --> " ) );
+
+        if ( sub_opt != 'A' && sub_opt != 'R' && sub_opt != 'T' )
+            printf( "Introduza uma opcao valida.\n" );
+    } while ( sub_opt != 'A' && sub_opt != 'R' && sub_opt != 'T' );
+
+    if ( sub_opt == 'A' ) grupo = 1;
+    else if ( sub_opt == 'R' ) grupo = 2;
+    else if ( sub_opt == 'T' ) grupo = 0;
+
+    listar_testes( p_teste, qt_testes, p_membro, qt_membros, grupo ); // Função definida em dados.c
 }
 
 t_membro* adicionar_membro( t_membro *m, int *qt_membros )

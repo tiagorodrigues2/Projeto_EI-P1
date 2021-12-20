@@ -274,15 +274,77 @@ t_membro ler_membro( t_membro *m, int num_membros )
     return membro;
 }
 
+/* Grupo difine os tipos de teste a ser mostrados...
+    grupo = 0: Todos os testes
+    grupo = 1: Testes agendados
+    grupo = 2: Testes realizados
+*/
+void listar_testes( t_teste* p_testes, int qt_testes, t_membro* p_membros, int qt_membros, int grupo )
+{
+    int m_pos = -1;
+    int realizado = 0;
+
+    for ( int i = 0; i < qt_testes; i++ )
+    {
+        t_teste t = p_testes[i];
+        m_pos = procurar_membro( p_membros, t.num_utente, qt_membros );
+        t_membro m = p_membros[m_pos];
+
+        realizado = t.duracao.hora + t.duracao.minuto;
+
+        switch ( grupo )
+        {
+            case 0:
+                printf( "\nLISTAGEM DE TODOS OS TESTES:\n" );
+                break;
+            case 1:
+                printf( "\nLISTAGEM DE TESTES AGENDADOS\n" );
+                if ( realizado )
+                    continue;
+                break;
+            case 2:
+                printf( "\nLISTAGEM DE TESTES REALIZADOS\n" );
+                if ( !realizado )
+                    continue;
+                break;
+        }
+
+        printf( "Teste %s (%04d)\n", realizado ? "realizado" : "agendado", t.id );
+        printf( "Tipo: %s\n", t.tipo == 'P' ? "PCR" : "Antigenio" );
+        printf( "Utente: (%04d) %s\n", m.num_utente, m.nome );
+        printf( "Data: %02d/%02d/%02d\n", t.data.dia, t.data.mes, t.data.ano );
+        printf( "Hora: %02d:%02d\n", t.hora.hora, t.hora.minuto );
+
+        if ( !realizado )
+            continue;
+
+        printf( "Duracao: %02d:%02d\n", t.duracao.hora, t.duracao.minuto );
+        printf( "Resultado: " );
+        switch ( t.resultado )
+        {
+            case 0: printf( "Negativo\n" ); break;
+            case 1: printf( "Positivo\n" ); break;
+            case -1: printf( "Inconclusivo\n" ); break;
+        }
+        printf( "\n" );
+    }
+}
+
 void listar_membros( t_membro *membros, int qt_membros, t_teste *p_testes, int qt_testes )              // qt_testes = testes agendados + testes realizados
 {
 
     if ( membros == NULL ) // Prevenir que o programe crashe, não necessário mas evita perca de tempo enquanto se debuga/programa
         return;
 
+    if ( qt_membros == 0 )
+    {
+        printf( "Nao existem membros para mostrar.\n" );
+        return;
+    }
+
     for ( int i = 0; i < qt_membros; i++ ) //Mostrar informação fácil de compreender
     {
-        printf( "\nUtente (%d): %s\n", membros[i].num_utente, membros[i].nome );
+        printf( "\nUtente (%04d): %s\n", membros[i].num_utente, membros[i].nome );
 
         switch ( membros[i].tipo )
         {
@@ -327,7 +389,7 @@ void listar_membros( t_membro *membros, int qt_membros, t_teste *p_testes, int q
                 else
                     printf( "TESTE AGENDADO " );
 
-                printf( "ID: %d\n", p_testes[i2].id );
+                printf( "ID: %04d\n", p_testes[i2].id );
                 printf( "Tipo: %s\n", p_testes[i2].tipo == 'P' ? "PCR" : "Antigenio" );
                 printf( "Data: %02d/%02d/%02d\n", p_testes[i2].data.dia, p_testes[i2].data.mes, p_testes[i2].data.ano );
                 printf( "Hora: %02d:%02d\n", p_testes[i2].hora.hora, p_testes[i2].hora.minuto );
