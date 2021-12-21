@@ -6,3 +6,11 @@ Duracao: 00:12
 Utente: Tiago (1 Dose)
 _______________________
 
+Registado um resultado do teste 0003
+Resultado: POSITIVO
+Tipo de teste: Antigenio
+Data e Hora: 29/12/2021 04:00
+Duracao: 03:00
+Utente: Tiago (1 Dose)
+_______________________
+

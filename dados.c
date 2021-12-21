@@ -330,6 +330,68 @@ void listar_testes( t_teste* p_testes, int qt_testes, t_membro* p_membros, int q
     }
 }
 
+
+/*
+    Dados a mostrar:
+     - Quantidade de cada tipo de membro académico;
+     - Tempo medio de duracao de cada teste realizado;          // Ideia - Calcular o tempo medio em minutos e nao esquecer que 1 hora = 60 minutos
+     - Percentagem dos testes inconclusivos;
+     - Membro(s) da comunidade com menos testes realizados.     // Ideia - Calcular qual o menor numero de testes realizado e mostrar todos os membros académicos com esse numero.
+     - Teste realizado mais recente.                            // Ideia - Fazer um ciclo de trás para a frente e procurar o primeiro teste realizado
+*/
+void dados_estatiticos( t_membro* p_membro, int qt_membros, t_teste* p_testes, int qt_realizados, int qt_agendados )
+{
+
+}
+
+void info_teste( t_teste* p_testes, int qt_testes, t_membro* p_membro, int qt_membros )
+{
+    int id_teste = 0;
+    int pos = -1;
+    int positivos = 0;
+
+    t_teste t = { };
+    t_membro m = { };
+
+    do /* Pedir ao utlizador para selecionar um teste e verificar se existe */
+    {
+        id_teste = ler_inteiro( "Introduza o ID do teste", 1, 9999 );
+
+        pos = procurar_teste( p_testes, id_teste, qt_testes );
+
+        if ( pos == -1 )
+            printf( "Nao existe nenhum teste com esse id.\n" );
+    } while ( pos == -1 );
+
+    t = p_testes[pos];
+
+    pos = procurar_membro( p_membro, t.num_utente, qt_membros ); /* Procurar o membro associado ao teste */
+    m = p_membro[pos];                                              /* Nao é necessario ter a certeza que existe pois quando o teste é inserido, essa verificaçao é efetuada. */
+
+    /* Calcular o numero de testes positivos do membro académico */
+
+    for ( int i = 0; i < qt_testes; i++ ) /* Ciclo por todos os testes */
+    {
+        t_teste current_test = p_testes[i];
+
+        if ( current_test.num_utente == m.num_utente && current_test.resultado == 1 ) /* Se o num de utente do teste for o mesmo do que o membro do teste selecionado, e o resutlado for positivo, incrementa o contador */
+            positivos++;
+    }
+
+    /* Correr a funcoes de listar testes mas apenas com 1 elemento do vetor do teste que é pretendido mostrar. */
+    listar_testes( &t, 1, p_membro, qt_membros, 0 );
+
+    printf( "Tipo de membro: " );
+    switch ( m.tipo )
+    {
+        case 'E': printf( "Estudante\n" ); break;
+        case 'D': printf( "Docente\n" ); break;
+        case 'T': printf( "Tecnico\n" ); break;
+    }
+
+    printf( "Numero de testes positivos: %d\n\n", positivos );
+}
+
 void listar_membros( t_membro *membros, int qt_membros, t_teste *p_testes, int qt_testes )              // qt_testes = testes agendados + testes realizados
 {
 

@@ -15,6 +15,7 @@ t_teste* agendar_teste( t_teste*, int*, int, t_membro*, int );
 void menu_listar_testes( t_teste*, int, t_membro*, int );
 void alterar_data( t_teste*, int );
 void registar_resutlado_teste( t_teste*, int, t_membro*, int );
+void mostrar_info( t_membro*, int, t_teste*, int, int );
 
 int main( void )
 {
@@ -38,7 +39,7 @@ int main( void )
 
         switch ( opcao )
         {
-            case 'I': /* Inserir membro académico */
+            case 'M': /* Inserir membro académico */
                 membros = adicionar_membro( membros, &qt_membros );
                 gravar_membros( membros, qt_membros );                                  /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
                 break;
@@ -62,12 +63,13 @@ int main( void )
                 break;
             case 'R': // Registar resultado de um teste
                 registar_resutlado_teste( testes, qt_testes_agendados + qt_testes_realizados, membros, qt_membros );
-                gravar_testes( testes, qt_testes_realizados, qt_testes_agendados );
+                gravar_testes( testes, qt_testes_realizados, qt_testes_agendados );     /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
                 break;
             case 'I':
-
-
-
+                mostrar_info( membros, qt_membros, testes, qt_testes_agendados, qt_testes_realizados );
+                break;
+            case 'F':
+                printf( "FIM.\n" );
                 break;
             default: printf( "Insira uma opção valida.\n" );
         }
@@ -88,7 +90,7 @@ char menu( int qt_membros, int qt_testes_agendados, int qt_testes, int qt_vacina
     printf( "\n---------------------------------------MENU---------------------------------------\n" );
     printf( "Numero de membros: %13d\t\tNumero de testes realizados: %2d\n", qt_membros, qt_testes );
     printf( "Numero de membros vacinados: %3d\t\tNumero de testes agendados: %3d\n\n", qt_vacinados, qt_testes_agendados );
-    printf( "[I] - Inserir membro academico\n" );
+    printf( "[M] - Inserir membro academico\n" );
     printf( "[L] - Listar membros academicos\n" );
     printf( "[A] - Atualizar estado de vacinacao/confinamento\n\n" );
     printf( "[T] - Agendar um teste\n" );
@@ -99,6 +101,34 @@ char menu( int qt_membros, int qt_testes_agendados, int qt_testes, int qt_vacina
     printf( "\n[F] - Sair\n" );
     opt = ler_char( "\n\t\tOpcao" );
     return toupper( opt ); // turnar o caracter maiosculo
+}
+
+void mostrar_info( t_membro* p_membro, int qt_membros, t_teste* p_testes, int qt_testes_agendados, int qt_testes_realizados )
+{
+    char sub_opt = '\0';
+
+    /* Sub menu das informaoes */
+    do
+    {
+        sub_opt = toupper( ler_char( "[T] - Informacoes de um teste\n[E] - Dados estatisticos\n[C] - Casos de confinamento\n\t\tOpcao --> " ) );
+
+        if ( sub_opt != 'T' && sub_opt != 'E' && sub_opt != 'C' )
+            printf( "Introduza uma opcao valida" );
+
+    } while ( sub_opt != 'T' && sub_opt != 'E' && sub_opt != 'C' );
+
+    switch ( sub_opt )
+    {
+        case 'T':
+            info_teste( p_testes, qt_testes_agendados + qt_testes_realizados, p_membro, qt_membros );
+            break;
+        case 'E':
+            mostrar_dados_estatiticos( p_membro, qt_membros, p_testes, qt_testes_realizados, qt_testes_agendados );
+            break;
+        case 'C':
+
+            break;
+    }
 }
 
 void registar_resutlado_teste( t_teste *p_teste, int qt_testes, t_membro* p_membro, int qt_membros )
@@ -122,7 +152,7 @@ void registar_resutlado_teste( t_teste *p_teste, int qt_testes, t_membro* p_memb
 
     char res = '\0';
 
-    do
+    do /* Pedir resultado do teste */
     {
         res = toupper( ler_char( "Resultado do teste:\n[P] - Positivo\n[N] - Negativo\n[I] - Inconclusivo\n" ) );
 
@@ -131,7 +161,7 @@ void registar_resutlado_teste( t_teste *p_teste, int qt_testes, t_membro* p_memb
 
     } while ( res != 'P' && res != 'N' && res != 'I' );
 
-    switch ( res )
+    switch ( res ) /* Tranformar o input (char) em int */
     {
         case 'N': p_teste[pos].resultado = 0;
             break;
