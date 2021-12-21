@@ -138,3 +138,36 @@ t_teste* carregar_testes( int *p_realizados, int *p_agendados )
 
     return p_teste;
 }
+
+extern void log_resultado( t_teste t, t_membro *p_membros, int qt_membros )
+{
+    FILE *pFile = fopen( "resultados.txt", "a" );
+    int pos = -1;
+
+    pos = procurar_membro( p_membros, t.num_utente, qt_membros );
+    t_membro m = p_membros[pos];
+
+    if ( pFile )
+    {
+
+        fprintf( pFile, "Registado um resultado do teste %04d\n", t.id );
+        fprintf( pFile, "Resultado: " );
+        switch ( t.resultado )
+        {
+            case -1: fprintf( pFile, "INCONCLUSIVO\n" ); break;
+            case 0: fprintf( pFile, "NEGATIVO\n" ); break;
+            case 1: fprintf( pFile, "POSITIVO\n" ); break;
+        }
+        fprintf( pFile, "Tipo de teste: %s\n", t.tipo == 'P' ? "PCR" : "Antigenio" );
+        fprintf( pFile, "Data e Hora: %02d/%02d/%02d %02d:%02d\n", t.data.dia, t.data.mes, t.data.ano, t.hora.hora, t.hora.minuto );
+        fprintf( pFile, "Duracao: %02d:%02d\n", t.duracao.hora, t.duracao.minuto );
+        fprintf( pFile, "Utente: %s (%d Dose)\n_______________________\n\n", m.nome, m.vacinacao );
+
+
+        fclose( pFile );
+    }
+    else
+    {
+        printf( "**ERRO AO ABRIR FICHEIRO LOG**\n" );
+    }
+}

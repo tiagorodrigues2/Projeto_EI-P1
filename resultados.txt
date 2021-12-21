@@ -1,0 +1,8 @@
+Registado um resultado do teste 0002
+Resultado: INCONCLUSIVO
+Tipo de teste: Antigenio
+Data e Hora: 29/12/2021 12:00
+Duracao: 00:12
+Utente: Tiago (1 Dose)
+_______________________
+

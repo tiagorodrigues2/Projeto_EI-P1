@@ -13,6 +13,8 @@ void alterar_confinamento( t_membro*, int );
 void atualizar_estados( t_membro*, int );
 t_teste* agendar_teste( t_teste*, int*, int, t_membro*, int );
 void menu_listar_testes( t_teste*, int, t_membro*, int );
+void alterar_data( t_teste*, int );
+void registar_resutlado_teste( t_teste*, int, t_membro*, int );
 
 int main( void )
 {
@@ -55,9 +57,16 @@ int main( void )
                 menu_listar_testes( testes, qt_testes_agendados + qt_testes_realizados, membros, qt_membros );
                 break;
             case 'E': // Alterar data de um teste
-
+                alterar_data( testes, qt_testes_agendados + qt_testes_realizados );
+                gravar_testes( testes, qt_testes_realizados, qt_testes_agendados );     /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
                 break;
             case 'R': // Registar resultado de um teste
+                registar_resutlado_teste( testes, qt_testes_agendados + qt_testes_realizados, membros, qt_membros );
+                gravar_testes( testes, qt_testes_realizados, qt_testes_agendados );
+                break;
+            case 'I':
+
+
 
                 break;
             default: printf( "Insira uma opção valida.\n" );
@@ -85,10 +94,85 @@ char menu( int qt_membros, int qt_testes_agendados, int qt_testes, int qt_vacina
     printf( "[T] - Agendar um teste\n" );
     printf( "[K] - Listar testes\n" );
     printf( "[E] - Alterar data de um teste\n" );
-    printf( "[R] - Registar resultado de um teste\n" );
+    printf( "[R] - Registar resultado de um teste\n\n" );
+    printf( "[I] - Informacoes\n" );                            /* Aqui devem ser feitos os ultimos 3 pontos do enumciado num sub-menu */
     printf( "\n[F] - Sair\n" );
     opt = ler_char( "\n\t\tOpcao" );
     return toupper( opt ); // turnar o caracter maiosculo
+}
+
+void registar_resutlado_teste( t_teste *p_teste, int qt_testes, t_membro* p_membro, int qt_membros )
+{
+    int pos = -1;
+    int id = -1;
+
+    do
+    {
+        id = ler_inteiro( "Introduza o ID do teste a registar resultado", 1, 9999 );
+
+        pos = procurar_teste( p_teste, id, qt_testes );
+
+        if ( pos != -1 && (p_teste[pos].duracao.hora + p_teste[pos].duracao.minuto) > 0 ) /* Se o teste ja tiver sido realizado, mostrar o erro... */
+            pos = -1;
+
+        if ( pos == -1 )
+            printf( "Nao existe nenhum teste agendados com o id fornecido.\n" );
+
+    } while ( pos == -1 );
+
+    char res = '\0';
+
+    do
+    {
+        res = toupper( ler_char( "Resultado do teste:\n[P] - Positivo\n[N] - Negativo\n[I] - Inconclusivo\n" ) );
+
+        if ( res != 'P' && res != 'N' && res != 'I' )
+            printf( "Insira uma opcao valida\n" );
+
+    } while ( res != 'P' && res != 'N' && res != 'I' );
+
+    switch ( res )
+    {
+        case 'N': p_teste[pos].resultado = 0;
+            break;
+        case 'P': p_teste[pos].resultado = 1;
+            break;
+        case 'I': p_teste[pos].resultado = -1;
+            break;
+    }
+
+    p_teste[pos].duracao = ler_hora( "Introduza a duracao que o teste teve" );
+
+    /* Guardar resultado em log ... */
+    log_resultado( p_teste[pos], p_membro, qt_membros );
+}
+
+void alterar_data( t_teste* p_teste, int qt_testes ) // qt_testes = testes agendados + testes realizados
+{
+    int pos = -1;
+    int id = -1;
+
+    do
+    {
+        id = ler_inteiro( "Introduza o ID do teste a alterar a data", 1, 9999 );
+
+        pos = procurar_teste( p_teste, id, qt_testes );
+
+        if ( pos != -1 && (p_teste[pos].duracao.hora + p_teste[pos].duracao.minuto) > 0 ) /* Se o teste ja tiver sido realizado, mostrar o erro... */
+            pos = -1;
+
+        if ( pos == -1 )
+            printf( "Nao existe nenhum teste agendados com o id fornecido.\n" );
+
+    } while ( pos == -1 );
+
+    t_data nova_data = ler_data( "Introduza a nova data do teste", 2021 );
+    t_hora nova_hora = ler_hora( "Introduza a nova hora do teste" );
+
+    p_teste[pos].data = nova_data;
+    p_teste[pos].hora = nova_hora;
+
+    printf( "Data alterada com sucesso.\n" );
 }
 
 void menu_listar_testes( t_teste *p_teste, int qt_testes, t_membro *p_membro, int qt_membros )
