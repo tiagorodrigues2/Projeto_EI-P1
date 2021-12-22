@@ -26,6 +26,9 @@ typedef struct
     char estado_confinamento;   // Quarentena/isolamento profilatico/Nao confiado
     int vacinacao;              // Numero de vacinas (0-3)
     t_data ultima_vacina;       // Data da ultima vacina
+
+    t_data data_confinamento;   // Data em que o membro entrou em confinamento
+    int duracao;                // Duracao do confinamento em dias
 } t_membro;
 
 typedef struct

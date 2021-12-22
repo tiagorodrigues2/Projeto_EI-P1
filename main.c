@@ -123,7 +123,7 @@ void mostrar_info( t_membro* p_membro, int qt_membros, t_teste* p_testes, int qt
             info_teste( p_testes, qt_testes_agendados + qt_testes_realizados, p_membro, qt_membros );
             break;
         case 'E':
-            mostrar_dados_estatiticos( p_membro, qt_membros, p_testes, qt_testes_realizados, qt_testes_agendados );
+            //mostrar_dados_estatiticos( p_membro, qt_membros, p_testes, qt_testes_realizados, qt_testes_agendados );
             break;
         case 'C':
 
@@ -251,7 +251,7 @@ t_membro* adicionar_membro( t_membro *m, int *qt_membros )
     }
     else // Se ja foi inicizliado, aloca mais um espaço
     {
-        m = realloc( m, *qt_membros * sizeof( t_membro ) );
+        m = realloc( m, (*qt_membros + 1) * sizeof( t_membro ) );
 
         if ( m == NULL )
         {
@@ -262,7 +262,7 @@ t_membro* adicionar_membro( t_membro *m, int *qt_membros )
 
     m[*qt_membros] = ler_membro( m, *qt_membros ); // Le os dados do membro
 
-    (*qt_membros)++; // Incrementa a quantidade de membros
+    *qt_membros = *qt_membros + 1;      // Incrementa a quantidade de membros
     return m; // Retorna o endereço do ponteiro (Ver relatório)
 }
 
@@ -304,6 +304,12 @@ void alterar_confinamento( t_membro* m, int qt_membros )
         if ( check )
             printf( "Insira uma opçao valida.\n" );
     } while ( check );
+
+    if ( m[pos].estado_confinamento == 'I' || m[pos].estado_confinamento == 'Q' ) /* Se o membro está em confinamento, indicar a data e duraçao */
+    {
+        m[pos].data_confinamento = ler_data( "Indique a data em que o membro entrou em confinamento", 2021 );
+        m[pos].duracao = ler_inteiro( "Indique a duracao do confinamento em dias", 7, 30 );
+    }
 }
 
 void alterar_vacinacao( t_membro *m, int qt_membros )

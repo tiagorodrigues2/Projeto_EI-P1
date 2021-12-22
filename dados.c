@@ -263,6 +263,12 @@ t_membro ler_membro( t_membro *m, int num_membros )
         membro.estado_confinamento = toupper( ler_char( "[N] - Nao confinado\n[Q] - Quarentena\n[I] - Isolamento profilatico\nEstado do confinamento" )); // o caracter inserido é transformado em upper
     } while ( membro.estado_confinamento != 'N' && membro.estado_confinamento != 'I' && membro.estado_confinamento != 'Q' ); // Verifica se é um caracter valido para o estado de confinamento
 
+    if ( membro.estado_confinamento == 'I' || membro.estado_confinamento == 'Q' ) /* Se o membro está em confinamento, indicar a data e duraçao */
+    {
+        membro.data_confinamento = ler_data( "Indique a data em que o membro entrou em confinamento", 2021 );
+        membro.duracao = ler_inteiro( "Indique a duracao do confinamento em dias", 7, 30 );
+    }
+
     membro.vacinacao = ler_inteiro( "Numero de vacinas", 0, 3 );
 
     if ( membro.vacinacao > 0 ) // Caso o membro já tenha sido vacinado, pedir a data da ultima vacina

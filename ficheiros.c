@@ -18,7 +18,7 @@ void gravar_membros( t_membro *m, int qt_membros )
             return;
         }
 
-        controlo = fwrite( m, sizeof(t_membro), qt_membros, p_file );       /* Esvrever dados de registo */
+        controlo = fwrite( m, sizeof(t_membro), qt_membros, p_file );       /* Escrever dados de registo */
         if ( controlo != qt_membros )
         {
             printf( "***ERRO AO GUARDAR DADOS***\n" );
@@ -130,10 +130,6 @@ t_teste* carregar_testes( int *p_realizados, int *p_agendados )
         }
 
         fclose( p_file );
-    }
-    else
-    {
-        printf( "**ERRO AO ABRIR FICHEIRO PARA LER BINARIO**\n" );
     }
 
     return p_teste;
