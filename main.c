@@ -128,7 +128,7 @@ void mostrar_info( t_membro* p_membro, int qt_membros, t_teste* p_testes, int qt
             mostrar_dados_estatiticos( p_membro, qt_membros, p_testes, qt_testes_realizados, qt_testes_agendados );
             break;
         case 'C':
-
+            mostrar_casos_confinamento( p_membro, qt_membros );
             break;
     }
 }

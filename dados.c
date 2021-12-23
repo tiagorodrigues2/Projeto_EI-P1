@@ -468,6 +468,21 @@ void mostrar_dados_estatiticos( t_membro* p_membro, int qt_membros, t_teste* p_t
     printf( "\n\n\n" );
 }
 
+void mostrar_casos_confinamento( t_membro *p_membros, int qt_membros )
+{
+    for ( int i = 0; i < qt_membros; i++ )
+    {
+        t_membro m = p_membros[i];
+
+        if ( m.estado_confinamento != 'N' )
+        {
+            printf( "Membro confinado (%04d): %s\n", m.num_utente, m.nome );
+            printf( "Inicio de confinamento: %02d/%02d/%04d\n", m.data_confinamento.dia, m.data_confinamento.mes, m.data_confinamento.ano );
+            printf( "Duracao de confinamento: %d Dias\n\n", m.duracao );
+        }
+    }
+}
+
 void info_teste( t_teste* p_testes, int qt_testes, t_membro* p_membro, int qt_membros )
 {
     int id_teste = 0;

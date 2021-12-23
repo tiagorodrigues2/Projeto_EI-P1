@@ -19,15 +19,15 @@
 	<stdio.h>
 	"ficheiros.h"
 
-1640283075 source:c:\users\massas\desktop\projeto_p1\dados.c
+1640285905 source:c:\users\massas\desktop\projeto_p1\dados.c
 	<stdio.h>
 	<string.h>
 	<ctype.h>
 	"dados.h"
 
-1640280639 c:\users\massas\desktop\projeto_p1\dados.h
+1640285726 c:\users\massas\desktop\projeto_p1\dados.h
 
-1640284000 source:c:\users\massas\desktop\projeto_p1\main.c
+1640285958 source:c:\users\massas\desktop\projeto_p1\main.c
 	<stdio.h>
 	<stdlib.h>
 	<ctype.h>

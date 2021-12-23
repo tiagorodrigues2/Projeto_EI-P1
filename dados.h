@@ -63,5 +63,6 @@ extern t_teste ler_teste( t_teste*, int, int, t_membro*, int );
 extern t_hora ler_hora();
 extern void info_teste( t_teste*, int, t_membro*, int );
 extern void mostrar_dados_estatiticos( t_membro*, int, t_teste*, int, int );
+extern void mostrar_casos_confinamento( t_membro*, int );
 
 #endif // DADOS_H_INCLUDED
