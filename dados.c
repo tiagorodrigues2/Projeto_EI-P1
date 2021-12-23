@@ -300,15 +300,15 @@ void listar_testes( t_teste* p_testes, int qt_testes, t_membro* p_membros, int q
 
         switch ( grupo )
         {
-            case 0:
+            case GRUPO_TODOS:
                 printf( "\nLISTAGEM DE TODOS OS TESTES:\n" );
                 break;
-            case 1:
+            case GRUPO_AGENDADOS:
                 printf( "\nLISTAGEM DE TESTES AGENDADOS\n" );
                 if ( realizado )
                     continue;
                 break;
-            case 2:
+            case GRUPO_REALIZADOS:
                 printf( "\nLISTAGEM DE TESTES REALIZADOS\n" );
                 if ( !realizado )
                     continue;
@@ -336,18 +336,136 @@ void listar_testes( t_teste* p_testes, int qt_testes, t_membro* p_membros, int q
     }
 }
 
+/* Calcular o numero de testes de um membro por grupo
+    grupo = 0: Todos os testes
+    grupo = 1: Testes agendados
+    grupo = 2: Testes realizados
+*/
+int numero_testes( t_teste* p_testes, int qt_testes, int num_utente, int grupo )
+{
+    int m_pos = -1;
+    int realizado = 0;
+    int contagem = 0;
+
+    for ( int i = 0; i < qt_testes; i++ )
+    {
+        t_teste t = p_testes[i];
+
+        realizado = t.duracao.hora + t.duracao.minuto;
+
+        if ( t.num_utente == num_utente )
+        {
+            switch ( grupo )
+            {
+                case GRUPO_TODOS:           contagem++; break;
+                case GRUPO_AGENDADOS:       if ( !realizado ) contagem++; break;
+                case GRUPO_REALIZADOS:      if ( realizado ) contagem++; break;
+            }
+        }
+    }
+
+    return contagem;
+}
+
 
 /*
     Dados a mostrar:
-     - Quantidade de cada tipo de membro académico;
-     - Tempo medio de duracao de cada teste realizado;          // Ideia - Calcular o tempo medio em minutos e nao esquecer que 1 hora = 60 minutos
-     - Percentagem dos testes inconclusivos;
-     - Membro(s) da comunidade com menos testes realizados.     // Ideia - Calcular qual o menor numero de testes realizado e mostrar todos os membros académicos com esse numero.
-     - Teste realizado mais recente.                            // Ideia - Fazer um ciclo de trás para a frente e procurar o primeiro teste realizado
+     + Quantidade de cada tipo de membro académico;
+     + Tempo medio de duracao de cada teste realizado;          // Ideia - Calcular o tempo medio em minutos e nao esquecer que 1 hora = 60 minutos
+     + Percentagem dos testes inconclusivos;
+     + Membro(s) da comunidade com menos testes realizados.     // Ideia - Calcular qual o menor numero de testes realizado e mostrar todos os membros académicos com esse numero.
+     + Teste realizado mais recente.                            // Ideia - Fazer um ciclo de trás para a frente e procurar o primeiro teste realizado
 */
-void dados_estatiticos( t_membro* p_membro, int qt_membros, t_teste* p_testes, int qt_realizados, int qt_agendados )
+void mostrar_dados_estatiticos( t_membro* p_membro, int qt_membros, t_teste* p_testes, int qt_realizados, int qt_agendados )
 {
+    int qt_estudantes = 0;
+    int qt_docentes = 0;
+    int qt_tecnicos = 0;
 
+    int qt_testes = qt_agendados +  qt_realizados;
+    int qt_inconclusivos = 0;           /* Quantidade de testes inconclusivos */
+    float perc_inconclusivos = 0.f;     /* Percentagem de testes inconclusivos */
+
+    int duracao_m = 0;                  /* Duração em minutos do teste realizado (Se > 0 = Teste realizado; Se = 0, Teste agendado) */
+    int duracao_total = 0;
+    float duracao_media = 0.f;
+
+    int min_testes = qt_testes;         /* Quantidade minima de testes realizados, após calcular este valor, mostrar todos os membros com este numero de testes realizados */
+
+    int pos_recente = -1;               /* Posicao do teste realizado mais recente */
+
+    for ( int i = 0; i < qt_membros; i++ )  // Ciclo dos membros
+    {
+        t_membro m = p_membro[i];
+
+        if ( m.tipo == 'E' ) qt_estudantes++;
+        else if ( m.tipo == 'T' ) qt_tecnicos++;
+        else if ( m.tipo == 'D' ) qt_docentes++;
+
+        int testes = numero_testes( p_testes, qt_testes, m.num_utente, GRUPO_AGENDADOS );
+
+        if ( testes <= min_testes )
+            min_testes = testes;
+    }
+
+    for ( int i = 0; i < qt_testes; i++ )  // Ciclo dos testes
+    {
+        t_teste t = p_testes[i];
+        duracao_m = (t.duracao.hora * 60) + t.duracao.minuto;
+        duracao_total += duracao_m;
+
+        if ( duracao_m > 0 && t.resultado == -1 )
+            qt_inconclusivos++;
+
+    }
+
+    duracao_media = (float)duracao_total / qt_realizados;
+
+    int media_horas = duracao_media / 60;
+    int media_minutos = duracao_media - ( media_horas * 60 );
+
+    perc_inconclusivos = ((float)qt_inconclusivos * 100.f) / qt_realizados;
+
+    for ( int i = qt_testes - 1; i >= 0; i-- )  // Ciclo dos testes de tras para a frente
+    {
+        t_teste t = p_testes[i];
+
+        if ( t.duracao.minuto + t.duracao.hora > 0 )    // Encontrar o teste realizado mais recente
+        {
+            pos_recente = i;
+            break;
+        }
+    }
+
+
+    /* ----- MOSTRAR OS DADOS ----- */
+
+    printf( "\n------------DADOS ESTATISTICOS---------------\n" );
+    printf( "Numero de Estudantes: %d\t\tNumero de Docentes: %d\nNumero de Tecnicos: %d\n", qt_estudantes, qt_docentes, qt_tecnicos );
+    printf( "Tempo medio de duracao de testes realizados: %02d:%02d\n", media_horas, media_minutos );
+    printf( "Percentagem de testes inconclusivos: %.2f%% (%d/%d)\n", perc_inconclusivos, qt_inconclusivos, qt_realizados );
+
+    printf( "Numero minimo de testes realizados por membro: %d\n", min_testes );
+    for ( int i = 0; i < qt_membros; i++ ) // Mostrar todos membros com o menor numero de testes realizados
+    {
+        t_membro m = p_membro[i];
+
+        if ( numero_testes( p_testes, qt_testes, m.num_utente, GRUPO_REALIZADOS) == min_testes ) // Se o numero de testes do membro for igual ao numero minimo
+        {
+            printf( " - Membro (%04d): %s\n", m.num_utente, m.nome );
+        }
+    }
+
+    printf( "Teste realizado mais recente (%0d):\n", p_testes[pos_recente].id );
+    printf( "Utente: %04d\tResultado: ", p_testes[pos_recente].num_utente );
+    switch ( p_testes[pos_recente].resultado )
+    {
+        case -1: printf( "Inconclusivo\n" ); break;
+        case 0: printf( "Negativo\n" ); break;
+        case 1: printf( "Positivo\n" ); break;
+    }
+
+    printf( "\n\n\n" );
 }
 
 void info_teste( t_teste* p_testes, int qt_testes, t_membro* p_membro, int qt_membros )
@@ -356,8 +474,8 @@ void info_teste( t_teste* p_testes, int qt_testes, t_membro* p_membro, int qt_me
     int pos = -1;
     int positivos = 0;
 
-    t_teste t = { };
-    t_membro m = { };
+    t_teste t = { 0 };
+    t_membro m = { 0 };
 
     do /* Pedir ao utlizador para selecionar um teste e verificar se existe */
     {

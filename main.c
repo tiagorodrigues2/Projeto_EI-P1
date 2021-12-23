@@ -7,10 +7,10 @@
 
 
 char menu( int, int, int, int );
-t_membro* adicionar_membro( t_membro[], int* );
-void alterar_vacinacao( t_membro*, int );
+t_membro* adicionar_membro( t_membro[], int*, int* );
+void alterar_vacinacao( t_membro*, int, int* );
 void alterar_confinamento( t_membro*, int );
-void atualizar_estados( t_membro*, int );
+void atualizar_estados( t_membro*, int, int* );
 t_teste* agendar_teste( t_teste*, int*, int, t_membro*, int );
 void menu_listar_testes( t_teste*, int, t_membro*, int );
 void alterar_data( t_teste*, int );
@@ -28,7 +28,7 @@ int main( void )
     t_membro *membros = NULL;                   /* Membros da comunidade académica */
     t_teste *testes = NULL;                     /* Testes efetuados/agendados */
 
-    membros = carregar_membros( &qt_membros );
+    membros = carregar_membros( &qt_membros, &qt_vacinados );
     testes = carregar_testes( &qt_testes_realizados, &qt_testes_agendados );
 
     char opcao = '\0';
@@ -40,14 +40,14 @@ int main( void )
         switch ( opcao )
         {
             case 'M': /* Inserir membro académico */
-                membros = adicionar_membro( membros, &qt_membros );
+                membros = adicionar_membro( membros, &qt_membros, &qt_vacinados );
                 gravar_membros( membros, qt_membros );                                  /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
                 break;
             case 'L': /* Listar membros académicos */
                 listar_membros( membros, qt_membros, testes, qt_testes_agendados + qt_testes_realizados );
                 break;
             case 'A': /* Atualizar membro */
-                atualizar_estados( membros, qt_membros );
+                atualizar_estados( membros, qt_membros, &qt_vacinados );
                 gravar_membros( membros, qt_membros );                                  /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
                 break;
             case 'T': // Agendar teste
@@ -63,6 +63,8 @@ int main( void )
                 break;
             case 'R': // Registar resultado de um teste
                 registar_resutlado_teste( testes, qt_testes_agendados + qt_testes_realizados, membros, qt_membros );
+                qt_testes_agendados--;
+                qt_testes_realizados++;
                 gravar_testes( testes, qt_testes_realizados, qt_testes_agendados );     /* Gravar automaticamente para poupar espaço no menu e evitar'esquecimentos' */
                 break;
             case 'I':
@@ -123,7 +125,7 @@ void mostrar_info( t_membro* p_membro, int qt_membros, t_teste* p_testes, int qt
             info_teste( p_testes, qt_testes_agendados + qt_testes_realizados, p_membro, qt_membros );
             break;
         case 'E':
-            //mostrar_dados_estatiticos( p_membro, qt_membros, p_testes, qt_testes_realizados, qt_testes_agendados );
+            mostrar_dados_estatiticos( p_membro, qt_membros, p_testes, qt_testes_realizados, qt_testes_agendados );
             break;
         case 'C':
 
@@ -208,7 +210,7 @@ void alterar_data( t_teste* p_teste, int qt_testes ) // qt_testes = testes agend
 void menu_listar_testes( t_teste *p_teste, int qt_testes, t_membro *p_membro, int qt_membros )
 {
     char sub_opt = '\0';
-    int grupo = 0;
+    int grupo = GRUPO_TODOS;
 
     if ( qt_testes == 0 )
     {
@@ -224,14 +226,14 @@ void menu_listar_testes( t_teste *p_teste, int qt_testes, t_membro *p_membro, in
             printf( "Introduza uma opcao valida.\n" );
     } while ( sub_opt != 'A' && sub_opt != 'R' && sub_opt != 'T' );
 
-    if ( sub_opt == 'A' ) grupo = 1;
-    else if ( sub_opt == 'R' ) grupo = 2;
-    else if ( sub_opt == 'T' ) grupo = 0;
+    if ( sub_opt == 'A' ) grupo = GRUPO_AGENDADOS;
+    else if ( sub_opt == 'R' ) grupo = GRUPO_REALIZADOS;
+    else if ( sub_opt == 'T' ) grupo = GRUPO_TODOS;
 
     listar_testes( p_teste, qt_testes, p_membro, qt_membros, grupo ); // Função definida em dados.c
 }
 
-t_membro* adicionar_membro( t_membro *m, int *qt_membros )
+t_membro* adicionar_membro( t_membro *m, int *qt_membros, int* qt_vacinados )
 {
 
     if ( *qt_membros >= MAX_MEMBROS )
@@ -261,6 +263,9 @@ t_membro* adicionar_membro( t_membro *m, int *qt_membros )
     }
 
     m[*qt_membros] = ler_membro( m, *qt_membros ); // Le os dados do membro
+
+    if ( m[*qt_membros].vacinacao > 0 ) // Se o novo membro é vacinado
+        (*qt_vacinados)++;
 
     *qt_membros = *qt_membros + 1;      // Incrementa a quantidade de membros
     return m; // Retorna o endereço do ponteiro (Ver relatório)
@@ -312,10 +317,11 @@ void alterar_confinamento( t_membro* m, int qt_membros )
     }
 }
 
-void alterar_vacinacao( t_membro *m, int qt_membros )
+void alterar_vacinacao( t_membro *m, int qt_membros, int* qt_vacinados )
 {
     int pos = 0;
     int num_utente = -1;
+    int last_vacinacao = 0;
 
     do
     {
@@ -330,8 +336,9 @@ void alterar_vacinacao( t_membro *m, int qt_membros )
     if ( m[pos].vacinacao != 0 )
         printf( "Vacinacao atual: %d Dose\n", m[pos].vacinacao ); /* Mostrar numero de vacinas para referencia */
     else
-        printf( "Vacinação atual: Sem vacina\n" );
+        printf( "Vacinacao atual: Sem vacina\n" );
 
+    last_vacinacao = m[pos].vacinacao;
     m[pos].vacinacao = ler_inteiro( "Introduza o novo numero de vacinas", 0, 3 ); /* Pedir novo numero de vacinas */
 
     if ( m[pos].vacinacao == 0 )    /* Se o novo numero de vacinação for zero, limpar a data da ultima vacinação */
@@ -339,10 +346,17 @@ void alterar_vacinacao( t_membro *m, int qt_membros )
         m[pos].ultima_vacina.ano = 0;
         m[pos].ultima_vacina.dia = 0;
         m[pos].ultima_vacina.mes = 0;
+
+        if ( last_vacinacao > 0 ) // Se o utilizador estava vacinado e dexou de estar
+            (*qt_vacinados)--;
+
     }
     else                            /* Se não, perguntar a nova data... */
     {
         m[pos].ultima_vacina = ler_data( "Insira a data da ultima vacinacao", m[pos].ano_nascimento );
+
+        if ( last_vacinacao == 0 ) // Se o utilizador nao estava vacinado e comecou a estar
+            (*qt_vacinados)++;
     }
 }
 
@@ -367,7 +381,7 @@ t_teste* agendar_teste( t_teste* p_teste, int *p_qt_testes_agendados, int qt_tes
     return p_teste;
 }
 
-void atualizar_estados( t_membro *m, int qt_membros ) /* Sub Menu para atualizar membro */
+void atualizar_estados( t_membro *m, int qt_membros, int* qt_vacinados ) /* Sub Menu para atualizar membro */
 {
     char sub_opt = '\0';
 
@@ -383,7 +397,7 @@ void atualizar_estados( t_membro *m, int qt_membros ) /* Sub Menu para atualizar
     switch ( sub_opt )
     {
         case 'V':
-            alterar_vacinacao( m, qt_membros );
+            alterar_vacinacao( m, qt_membros, qt_vacinados );
             break;
         case 'C':
             alterar_confinamento( m, qt_membros );

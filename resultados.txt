@@ -14,3 +14,43 @@ Duracao: 03:00
 Utente: Tiago (1 Dose)
 _______________________
 
+Registado um resultado do teste 0001
+Resultado: NEGATIVO
+Tipo de teste: PCR
+Data e Hora: 29/12/2021 02:00
+Duracao: 01:00
+Utente:  (0 Dose)
+_______________________
+
+Registado um resultado do teste 0002
+Resultado: INCONCLUSIVO
+Tipo de teste: Antigenio
+Data e Hora: 30/12/2021 02:00
+Duracao: 00:10
+Utente:  (0 Dose)
+_______________________
+
+Registado um resultado do teste 0001
+Resultado: NEGATIVO
+Tipo de teste: PCR
+Data e Hora: 30/12/2021 19:00
+Duracao: 00:12
+Utente: tiago (0 Dose)
+_______________________
+
+Registado um resultado do teste 0002
+Resultado: INCONCLUSIVO
+Tipo de teste: Antigenio
+Data e Hora: 03/08/2021 07:00
+Duracao: 01:00
+Utente: Sergio (0 Dose)
+_______________________
+
+Registado um resultado do teste 0003
+Resultado: NEGATIVO
+Tipo de teste: PCR
+Data e Hora: 19/12/2021 13:00
+Duracao: 00:30
+Utente: Helder (0 Dose)
+_______________________
+

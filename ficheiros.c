@@ -34,7 +34,7 @@ void gravar_membros( t_membro *m, int qt_membros )
     }
 }
 
-t_membro* carregar_membros( int *qt_membros )
+t_membro* carregar_membros( int *qt_membros, int *qt_vacinados )
 {
     FILE* p_file = fopen( "membros.dat", "rb" );
     size_t controlo = 0;
@@ -64,6 +64,9 @@ t_membro* carregar_membros( int *qt_membros )
         }
 
     }
+
+    for ( int i = 0; i < *qt_membros; i++ ) // Calcular numero de vacinados
+        *qt_vacinados += m[i].vacinacao > 0;        // Se m[i].vacinacao > 0, soma 1, se nao, soma 0
 
     return m;
 }

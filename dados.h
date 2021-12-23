@@ -3,6 +3,9 @@
 
 #define MAX_NOME 50         // Caracteres do nome
 #define MAX_MEMBROS 200     // Numero maximo de membros
+#define GRUPO_TODOS 0
+#define GRUPO_AGENDADOS 1
+#define GRUPO_REALIZADOS 2
 
 typedef struct
 {
