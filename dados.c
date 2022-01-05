@@ -7,13 +7,12 @@
 
 void limpa_stdin( void )
 {
-   /* char c = '\0';
+    char c = '\0';
 
     do
     {
         c = getchar();
-    } while ( c != '\n' && c != EOF ); */
-    fflush( stdin ); // Limpa stdin
+    } while ( c != '\n' && c != EOF );
 }
 
 // Le um caracter
@@ -85,7 +84,6 @@ void ler_string( const char* msg, char out[], int tamanho_max, int apagar_newlin
     {
         printf( "%s (Max: %d caracteres): ", msg, tamanho_max );
         fgets( out, tamanho_max, stdin ); // Caso a menssagens tenha mais caracteres do que 'tamanho_max', a messagem fica cortada sem avisar o utilizador
-        limpa_stdin();
         tamanho = strlen( out );
 
         if ( tamanho == 1 ) printf( "Devera inserir pelo menos um caracter.\n" );
