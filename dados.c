@@ -55,26 +55,6 @@ int ler_inteiro( const char* msg, int min, int max )
     return num;
 }
 
-// Le um float entre min e max
-int ler_float( const char* msg, float min, float max )
-{
-    float num = min - 1.f;
-    int controlo = -1;
-
-    do
-    {
-        printf( "%s (%.2f - %.2f): ", msg, min, max );
-        controlo = scanf( "%f", &num );
-        limpa_stdin();
-
-        if ( controlo == 0 ) printf( "Nao foi possivel ler nenhum numero real.\n" );
-        else if ( num < min ) printf( "O numero nao pode ser menor que %.2f\n", min );
-        else if ( num > max ) printf( "O numero nao pode ser maior que %.2f\n", max );
-
-    } while ( controlo == 0 || num < min || num > max );
-
-}
-
 //Le uma string
 void ler_string( const char* msg, char out[], int tamanho_max, int apagar_newline )
 {
@@ -341,7 +321,6 @@ void listar_testes( t_teste* p_testes, int qt_testes, t_membro* p_membros, int q
 */
 int numero_testes( t_teste* p_testes, int qt_testes, int num_utente, int grupo )
 {
-    int m_pos = -1;
     int realizado = 0;
     int contagem = 0;
 
