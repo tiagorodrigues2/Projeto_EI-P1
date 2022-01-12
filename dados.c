@@ -47,8 +47,8 @@ int ler_inteiro( const char* msg, int min, int max )
         limpa_stdin();
 
         if ( controlo == 0 ) printf( "Nao foi possivel ler nenhum numero inteiro.\n" );
-        else if ( num < min ) printf( "O numero não pode ser menor que %d\n", min );
-        else if ( num > max ) printf( "O numero não pode ser maior que %d\n", max );
+        else if ( num < min ) printf( "O numero nao pode ser menor que %d\n", min );
+        else if ( num > max ) printf( "O numero nao pode ser maior que %d\n", max );
 
     } while ( controlo == 0 || num < min || num > max );
 
@@ -98,7 +98,7 @@ int qt_testes_data( t_teste *p_teste, int qt_testes, t_data data )
     return contador;
 }
 
-t_teste ler_teste( t_teste *p_teste, int qt_testes_agendados, int qt_testes_realizados, t_membro *p_membro, int qt_membros )
+t_teste ler_teste( t_teste *p_teste, int qt_testes_realizados, int qt_testes_agendados, t_membro *p_membro, int qt_membros )
 {
     t_teste teste = { 0 };
     int pos = -1;
@@ -120,7 +120,7 @@ t_teste ler_teste( t_teste *p_teste, int qt_testes_agendados, int qt_testes_real
         {
             teste.tipo = toupper( ler_char( "Introduza o tipo de teste:\n[P] - PCR\n[A] - Antigenio\n" ) );
 
-            if ( teste.tipo != 'A' && teste.tipo != 'P' ) printf( "Introduza uma opçao valida" );
+            if ( teste.tipo != 'A' && teste.tipo != 'P' ) printf( "Introduza uma opcao valida" );
 
         } while ( teste.tipo != 'A' && teste.tipo != 'P' );                                                                     /* Verificacao se o char lido é uma opcao valida */
 

@@ -375,7 +375,7 @@ t_teste* agendar_teste( t_teste* p_teste, int *p_qt_testes_agendados, int qt_tes
         return NULL;
     }
 
-    p_teste[*p_qt_testes_agendados + qt_testes_realizados] = ler_teste( p_teste, qt_testes_realizados, *p_qt_testes_agendados, p_membros, qt_membros );
+    p_teste[*p_qt_testes_agendados + qt_testes_realizados] = ler_teste( p_teste, *p_qt_testes_agendados, qt_testes_realizados, p_membros, qt_membros );
 
     (*p_qt_testes_agendados)++;
     return p_teste;
