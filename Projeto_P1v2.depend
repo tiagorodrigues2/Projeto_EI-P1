@@ -25,7 +25,7 @@
 	<ctype.h>
 	"dados.h"
 
-1640361617 c:\users\massas\desktop\projeto_p1\dados.h
+1640285726 c:\users\massas\desktop\projeto_p1\dados.h
 
 1642552557 source:c:\users\massas\desktop\projeto_p1\main.c
 	<stdio.h>
@@ -34,10 +34,10 @@
 	"dados.h"
 	"ficheiros.h"
 
-1640361617 c:\users\massas\desktop\projeto_p1\ficheiros.h
+1640283429 c:\users\massas\desktop\projeto_p1\ficheiros.h
 	"dados.h"
 
-1640361617 source:c:\users\massas\desktop\projeto_p1\ficheiros.c
+1640283598 source:c:\users\massas\desktop\projeto_p1\ficheiros.c
 	<stdio.h>
 	<stdlib.h>
 	"ficheiros.h"
