@@ -73,7 +73,6 @@ int main( void )
             case 'F':
                 printf( "FIM.\n" );
                 break;
-            default: printf( "Insira uma opção valida.\n" );
         }
 
     } while ( opcao != 'F' );
